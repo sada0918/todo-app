@@ -1,3 +1,4 @@
+import { appConfig } from './config';
 import styles from './page.module.css';
 
 export default function Index() {
@@ -13,7 +14,7 @@ export default function Index() {
           <div id="welcome">
             <h1>
               <span> Hello there, </span>
-              Welcome @todo-app/client 👋
+              Welcome to {appConfig.appName} 👋
             </h1>
           </div>
 

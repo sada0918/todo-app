@@ -6,5 +6,39 @@
     "next": "~15.2.4",
     "react": "19.0.0",
     "react-dom": "19.0.0"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "configurations": {
+          "staging": {
+            "fileReplacements": [
+              {
+                "replace": "apps/client/src/environments/environment.ts",
+                "with": "apps/client/src/environments/environment.staging.ts"
+              }
+            ]
+          },
+          "production": {
+            "fileReplacements": [
+              {
+                "replace": "apps/client/src/environments/environment.ts",
+                "with": "apps/client/src/environments/environment.production.ts"
+              }
+            ]
+          }
+        }
+      },
+      "dev": {
+        "configurations": {
+          "staging": {
+            "port": 3001
+          },
+          "production": {
+            "port": 3002
+          }
+        }
+      }
+    }
   }
 }
