@@ -7,7 +7,7 @@ import { InputField, SubmitButton } from '@/components/auth/FormComponents';
 import { register, RegistrationError } from '@/components/auth/user-auth';
 import styles from './register.module.css';
 
-const RegisterPage: React.FC = () => {
+export default function RegisterPage() {
   const router = useRouter();
   const [apiError, setApiError] = useState<string>('');
 
@@ -141,6 +141,4 @@ const RegisterPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}
