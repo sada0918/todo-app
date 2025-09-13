@@ -25,14 +25,14 @@ const RegisterPage: React.FC = () => {
       setApiError('');
       try {
         await register(data);
-        
+
         // 成功時はログインページへリダイレクト
-        router.push('/login');
+        router.push('/register/login');
       } catch (error) {
         if (error instanceof RegistrationError) {
           // APIからのエラーを表示
           if (error.errors.length > 0) {
-            setApiError(error.errors.map(e => e.message).join(', '));
+            setApiError(error.errors.map((e) => e.message).join(', '));
           } else {
             setApiError(error.message);
           }
@@ -48,7 +48,7 @@ const RegisterPage: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.formWrapper}>
         <h1 className={styles.title}>会員登録</h1>
-        
+
         {apiError && (
           <div className={styles.apiError} role="alert" aria-live="polite">
             {apiError}
@@ -130,7 +130,7 @@ const RegisterPage: React.FC = () => {
             すでにアカウントをお持ちですか？{' '}
             <button
               type="button"
-              onClick={() => router.push('/login')}
+              onClick={() => router.push('/register/login')}
               className={styles.linkButton}
               disabled={isSubmitting}
             >
