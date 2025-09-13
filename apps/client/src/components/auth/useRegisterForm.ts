@@ -1,5 +1,9 @@
 import { useState, useCallback } from 'react';
-import { RegisterFormData, ValidationError, validateRegisterForm, validateField } from './validation';
+import {
+  RegisterFormData,
+  validateRegisterForm,
+  validateField,
+} from './validation';
 
 interface UseRegisterFormOptions {
   onSubmit: (data: Omit<RegisterFormData, 'confirmPassword'>) => Promise<void>;
@@ -18,7 +22,9 @@ interface UseRegisterFormReturn {
 /**
  * 登録フォーム用のカスタムフック
  */
-export const useRegisterForm = ({ onSubmit }: UseRegisterFormOptions): UseRegisterFormReturn => {
+export const useRegisterForm = ({
+  onSubmit,
+}: UseRegisterFormOptions): UseRegisterFormReturn => {
   const [formData, setFormData] = useState<RegisterFormData>({
     name1: '',
     name2: '',
@@ -34,63 +40,74 @@ export const useRegisterForm = ({ onSubmit }: UseRegisterFormOptions): UseRegist
   /**
    * フィールド値の変更処理
    */
-  const handleFieldChange = useCallback((field: keyof RegisterFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // リアルタイムバリデーション（フィールドが触られた後のみ）
-    if (touchedFields.has(field)) {
-      const error = validateField(field, value, formData);
-      setErrors(prev => ({
-        ...prev,
-        [field]: error || '',
-      }));
-    }
-  }, [formData, touchedFields]);
+  const handleFieldChange = useCallback(
+    (field: keyof RegisterFormData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+
+      // リアルタイムバリデーション（フィールドが触られた後のみ）
+      if (touchedFields.has(field)) {
+        const error = validateField(field, value, formData);
+        setErrors((prev) => ({
+          ...prev,
+          [field]: error || '',
+        }));
+      }
+    },
+    [formData, touchedFields]
+  );
 
   /**
    * フィールドがフォーカスを失った時の処理
    */
-  const handleFieldBlur = useCallback((field: keyof RegisterFormData) => {
-    setTouchedFields(prev => new Set([...prev, field]));
-    const error = validateField(field, formData[field], formData);
-    setErrors(prev => ({
-      ...prev,
-      [field]: error || '',
-    }));
-  }, [formData]);
+  const handleFieldBlur = useCallback(
+    (field: keyof RegisterFormData) => {
+      setTouchedFields((prev) => new Set([...prev, field]));
+      const error = validateField(field, formData[field], formData);
+      setErrors((prev) => ({
+        ...prev,
+        [field]: error || '',
+      }));
+    },
+    [formData]
+  );
 
   /**
    * フォーム送信処理
    */
-  const handleSubmit = useCallback(async (event: React.FormEvent) => {
-    event.preventDefault();
-    
-    // 全フィールドのバリデーション
-    const validationErrors = validateRegisterForm(formData);
-    
-    if (validationErrors.length > 0) {
-      const errorMap: Record<string, string> = {};
-      validationErrors.forEach(error => {
-        errorMap[error.field] = error.message;
-      });
-      setErrors(errorMap);
-      
-      // 全フィールドを「触られた」状態に
-      setTouchedFields(new Set(['name1', 'name2', 'email', 'login_pwd', 'confirmPassword']));
-      return;
-    }
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
 
-    setIsSubmitting(true);
-    try {
-      // confirmPasswordはAPIに送信しない
-      const { confirmPassword, ...apiData } = formData;
-      await onSubmit(apiData);
-    } catch (error) {
-      console.error('Registration error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [formData, onSubmit]);
+      // 全フィールドのバリデーション
+      const validationErrors = validateRegisterForm(formData);
+
+      if (validationErrors.length > 0) {
+        const errorMap: Record<string, string> = {};
+        validationErrors.forEach((error) => {
+          errorMap[error.field] = error.message;
+        });
+        setErrors(errorMap);
+
+        // 全フィールドを「触られた」状態に
+        setTouchedFields(
+          new Set(['name1', 'name2', 'email', 'login_pwd', 'confirmPassword'])
+        );
+        return;
+      }
+
+      setIsSubmitting(true);
+      try {
+        // confirmPasswordはAPIに送信しない
+        const { confirmPassword, ...apiData } = formData;
+        await onSubmit(apiData);
+      } catch (error) {
+        console.error('Registration error:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [formData, onSubmit]
+  );
 
   /**
    * フォームの有効性チェック
