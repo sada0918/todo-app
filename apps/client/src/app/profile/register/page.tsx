@@ -20,11 +20,19 @@ export default function RegisterPage() {
     handleFieldBlur,
     handleSubmit,
     isValid,
+    setFieldErrors,
+    clearErrors,
   } = useRegisterForm({
     onSubmit: async (data) => {
       setApiError('');
+      clearErrors(); // 既存のエラーをクリア
       try {
-        await register(data);
+        const result = await register(data);
+
+        // 成功時のメッセージがあれば一瞬表示（オプション）
+        if (result.messages && result.messages.length > 0) {
+          console.log('Registration success:', result.messages[0]);
+        }
 
         // 成功時はログインページへリダイレクト
         router.push('/profile/login');
@@ -32,13 +40,36 @@ export default function RegisterPage() {
         if (error instanceof RegistrationError) {
           // APIからのエラーを表示
           if (error.errors.length > 0) {
-            setApiError(error.errors.map((e) => e.message).join(', '));
+            // フィールド特定のエラーをフォームエラーにマップ
+            const fieldErrors: Record<string, string> = {};
+            const generalErrors: string[] = [];
+
+            error.errors.forEach((e) => {
+              if (e.field && ['name1', 'name2', 'email', 'login_pwd'].includes(e.field)) {
+                fieldErrors[e.field] = e.message;
+              } else {
+                generalErrors.push(e.message);
+              }
+            });
+
+            // フィールドエラーをフォームに設定
+            if (Object.keys(fieldErrors).length > 0) {
+              setFieldErrors(fieldErrors);
+            }
+
+            // 一般的なエラーをAPIエラーとして表示
+            if (generalErrors.length > 0) {
+              setApiError(generalErrors.join(', '));
+            } else if (Object.keys(fieldErrors).length > 0) {
+              setApiError('入力内容に問題があります。各フィールドをご確認ください。');
+            }
           } else {
             setApiError(error.message);
           }
         } else {
           setApiError('予期しないエラーが発生しました');
         }
+        console.error('Registration error:', error);
         throw error; // フックでも処理するためにre-throw
       }
     },

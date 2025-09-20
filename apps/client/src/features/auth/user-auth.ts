@@ -20,6 +20,8 @@ export interface ApiRegisterData {
 export interface RegisterApiResponse {
   errors?: ErrorResponse[];
   member?: Member;
+  messages?: string[];
+  id?: number;
 }
 
 // ログイン用の型定義
@@ -87,17 +89,38 @@ async function apiRequest<T extends { errors?: ErrorResponse[] }>(
   try {
     const response = await fetch(url, options);
 
-    if (!response.ok) {
+    // レスポンスがJSON形式かどうかをチェック
+    const contentType = response.headers.get('content-type');
+    const isJson = contentType && contentType.includes('application/json');
+
+    if (!isJson) {
+      // JSONでない場合（HTMLエラーページなど）
       throw new ErrorClass(
-        `HTTP エラー: ${response.status}`,
+        `サーバーエラー: ${response.status}`,
         [],
         response.status
       );
     }
 
+    // レスポンスをJSONとして解析
     const data: T = await response.json();
 
-    // APIエラーのチェックを統合
+    // HTTPステータスが400でエラーが含まれている場合
+    if (!response.ok) {
+      if (data.errors && data.errors.length > 0) {
+        // APIからの詳細なエラーメッセージを使用
+        throw new ErrorClass(apiErrorMessage, data.errors, response.status);
+      } else {
+        // エラーの詳細がない場合は汎用メッセージ
+        throw new ErrorClass(
+          `HTTP エラー: ${response.status}`,
+          [],
+          response.status
+        );
+      }
+    }
+
+    // 200番台だがエラーが含まれている場合（一部のAPIはこの形式）
     if (data.errors && data.errors.length > 0) {
       throw new ErrorClass(apiErrorMessage, data.errors);
     }
@@ -118,8 +141,8 @@ async function apiRequest<T extends { errors?: ErrorResponse[] }>(
 /**
  * 会員登録API呼び出し
  */
-export const register = async (postData: ApiRegisterData): Promise<void> => {
-  await apiRequest<RegisterApiResponse>(
+export const register = async (postData: ApiRegisterData): Promise<RegisterApiResponse> => {
+  return await apiRequest<RegisterApiResponse>(
     `${environment.apiUrl}/rcms-api/1/member/register`,
     {
       method: 'POST',

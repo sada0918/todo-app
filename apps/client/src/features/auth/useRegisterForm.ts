@@ -17,6 +17,8 @@ interface UseRegisterFormReturn {
   handleFieldBlur: (field: keyof RegisterFormData) => void;
   handleSubmit: (event: React.FormEvent) => Promise<void>;
   isValid: boolean;
+  setFieldErrors: (errors: Record<string, string>) => void;
+  clearErrors: () => void;
 }
 
 /**
@@ -110,6 +112,24 @@ export const useRegisterForm = ({
   );
 
   /**
+   * 外部からフィールドエラーを設定する関数
+   */
+  const setFieldErrors = useCallback((newErrors: Record<string, string>) => {
+    setErrors((prev) => ({ ...prev, ...newErrors }));
+    
+    // エラーのあるフィールドを「触られた」状態にする
+    const errorFields = Object.keys(newErrors);
+    setTouchedFields((prev) => new Set([...prev, ...errorFields]));
+  }, []);
+
+  /**
+   * エラーをクリアする関数
+   */
+  const clearErrors = useCallback(() => {
+    setErrors({});
+  }, []);
+
+  /**
    * フォームの有効性チェック
    */
   const isValid = validateRegisterForm(formData).length === 0;
@@ -122,5 +142,7 @@ export const useRegisterForm = ({
     handleFieldBlur,
     handleSubmit,
     isValid,
+    setFieldErrors,
+    clearErrors,
   };
 };
