@@ -32,11 +32,11 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.form-input.error {
+.form-input-error {
   border-color: #dc2626;
 }
 
-.form-input.error:focus {
+.form-input-error:focus {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
@@ -88,7 +88,7 @@
   transform: none;
 }
 
-.submit-button.loading {
+.submit-button-loading {
   background-color: #6b7280;
 }
 

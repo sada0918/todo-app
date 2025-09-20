@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useRegisterForm } from '@/components/auth/useRegisterForm';
-import { InputField, SubmitButton } from '@/components/auth/FormComponents';
-import { register, RegistrationError } from '@/components/auth/user-auth';
-import styles from './register.module.css';
+import { useRegisterForm } from '@/features/auth/useRegisterForm';
+import { InputField, SubmitButton } from '@/features/auth/form/formComponents';
+import { register, RegistrationError } from '@/features/auth/user-auth';
+import styles from './page.module.css';
 
 export default function RegisterPage() {
   const router = useRouter();

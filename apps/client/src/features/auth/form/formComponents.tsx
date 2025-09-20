@@ -1,5 +1,5 @@
 import React from 'react';
-import './FormComponents.css';
+import styles from './formComponents.module.css';
 
 interface InputFieldProps {
   label: string;
@@ -28,14 +28,14 @@ export const InputField: React.FC<InputFieldProps> = ({
   disabled = false,
 }) => {
   const inputId = `input-${label.replace(/\s+/g, '-').toLowerCase()}`;
-  
+
   return (
-    <div className="form-field">
-      <label htmlFor={inputId} className="form-label">
+    <div className={styles['form-field']}>
+      <label htmlFor={inputId} className={styles['form-label']}>
         {label}
-        {required && <span className="required-mark">*</span>}
+        {required && <span className={styles['required-mark']}>*</span>}
       </label>
-      
+
       <input
         id={inputId}
         type={type}
@@ -44,13 +44,19 @@ export const InputField: React.FC<InputFieldProps> = ({
         onBlur={onBlur}
         placeholder={placeholder}
         disabled={disabled}
-        className={`form-input ${error ? 'error' : ''}`}
+        className={`${styles['form-input']} ${
+          error ? styles['form-input-error'] : ''
+        }`}
         aria-describedby={error ? `${inputId}-error` : undefined}
         aria-invalid={!!error}
       />
-      
+
       {error && (
-        <div id={`${inputId}-error`} className="error-message" role="alert">
+        <div
+          id={`${inputId}-error`}
+          className={styles['error-message']}
+          role="alert"
+        >
           {error}
         </div>
       )}
@@ -78,12 +84,14 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
     <button
       type="submit"
       disabled={disabled || isLoading}
-      className={`submit-button ${className} ${isLoading ? 'loading' : ''}`}
+      className={`${styles['submit-button']} ${className} ${
+        isLoading ? styles['submit-button-loading'] : ''
+      }`}
       aria-disabled={disabled || isLoading}
     >
       {isLoading ? (
         <>
-          <span className="loading-spinner" aria-hidden="true" />
+          <span className={styles['loading-spinner']} aria-hidden="true" />
           登録中...
         </>
       ) : (
