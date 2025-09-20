@@ -1,70 +1,151 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLoginForm } from '@/features/auth/useLoginForm';
+import { InputField, SubmitButton } from '@/features/auth/form/formComponents';
+import { login, LoginError } from '@/features/auth/user-auth';
+import {
+  translateErrorMessages,
+  getFieldErrorMessage,
+} from '@/features/auth/errorMessages';
+import styles from './page.module.css';
 
-const LoginPage: React.FC = () => {
+export default function LoginPage() {
   const router = useRouter();
+  const [apiError, setApiError] = useState<string>('');
+
+  // カスタムフックを使用してフォームロジックを管理
+  const {
+    formData,
+    errors,
+    isSubmitting,
+    handleFieldChange,
+    handleFieldBlur,
+    handleSubmit,
+    isValid,
+    setFieldErrors,
+    clearErrors,
+  } = useLoginForm({
+    onSubmit: async (data) => {
+      setApiError('');
+      clearErrors(); // 既存のエラーをクリア
+      try {
+        const result = await login(data);
+
+        // ログイン成功時のメッセージがあれば表示（オプション）
+        if (result.member) {
+          console.log('Login success for:', result.member.email);
+        }
+
+        // 成功時はTodoページへリダイレクト
+        router.push('/todo');
+      } catch (error) {
+        if (error instanceof LoginError) {
+          // APIからのエラーを日本語に変換して表示
+          if (error.errors.length > 0) {
+            // エラーメッセージを日本語に変換
+            const translatedErrors = translateErrorMessages(error.errors);
+
+            // フィールド特定のエラーをフォームエラーにマップ
+            const fieldErrors: Record<string, string> = {};
+            const generalErrors: string[] = [];
+
+            translatedErrors.forEach((e) => {
+              if (e.field && ['email', 'password'].includes(e.field)) {
+                // フィールド固有のエラーメッセージを取得
+                const fieldMessage = e.code
+                  ? getFieldErrorMessage(e.field, e.code, e.message)
+                  : e.message;
+                fieldErrors[e.field] = fieldMessage;
+              } else {
+                generalErrors.push(e.message);
+              }
+            });
+
+            // フィールドエラーをフォームに設定
+            if (Object.keys(fieldErrors).length > 0) {
+              setFieldErrors(fieldErrors);
+            }
+
+            // 一般的なエラーをAPIエラーとして表示
+            if (generalErrors.length > 0) {
+              setApiError(generalErrors.join(', '));
+            } else if (Object.keys(fieldErrors).length > 0) {
+              setApiError('ログイン情報をご確認ください。');
+            }
+          } else {
+            setApiError(error.message);
+          }
+        } else {
+          setApiError('予期しないエラーが発生しました');
+        }
+        console.error('Login error:', error);
+        throw error; // フックでも処理するためにre-throw
+      }
+    },
+  });
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      flexDirection: 'column',
-      gap: '1rem',
-      backgroundColor: '#f5f5f5'
-    }}>
-      <div style={{
-        background: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        padding: '2rem',
-        textAlign: 'center',
-        maxWidth: '400px',
-        width: '100%'
-      }}>
-        <h1 style={{ 
-          color: '#22c55e', 
-          marginBottom: '1rem',
-          fontSize: '1.5rem'
-        }}>
-          🎉 会員登録完了！
-        </h1>
-        
-        <p style={{ 
-          color: '#6b7280', 
-          marginBottom: '2rem' 
-        }}>
-          登録が正常に完了しました。<br/>
-          ログイン画面の実装はこれからです。
-        </p>
+    <div className={styles.container}>
+      <div className={styles.formWrapper}>
+        <h1 className={styles.title}>ログイン</h1>
 
-        <button
-          onClick={() => router.push('/register')}
-          style={{
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '4px',
-            fontSize: '1rem',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#1d4ed8';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#3b82f6';
-          }}
-        >
-          登録画面に戻る
-        </button>
+        {apiError && (
+          <div className={styles.apiError} role="alert" aria-live="polite">
+            {apiError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
+          <InputField
+            label="メールアドレス"
+            type="email"
+            value={formData.email}
+            onChange={(value) => handleFieldChange('email', value)}
+            onBlur={() => handleFieldBlur('email')}
+            error={errors.email}
+            placeholder="example@email.com"
+            required
+            disabled={isSubmitting}
+          />
+
+          <InputField
+            label="パスワード"
+            type="password"
+            value={formData.password}
+            onChange={(value) => handleFieldChange('password', value)}
+            onBlur={() => handleFieldBlur('password')}
+            error={errors.password}
+            placeholder="パスワードを入力してください"
+            required
+            disabled={isSubmitting}
+          />
+
+          <SubmitButton
+            isLoading={isSubmitting}
+            disabled={!isValid}
+            className={styles.submitButton}
+            loadingText="ログイン中..."
+          >
+            ログイン
+          </SubmitButton>
+        </form>
+
+        <div className={styles.footer}>
+          <p>
+            アカウントをお持ちでないですか？{' '}
+            <button
+              type="button"
+              onClick={() => router.push('/profile/register')}
+              className={styles.linkButton}
+              disabled={isSubmitting}
+            >
+              会員登録はこちら
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}

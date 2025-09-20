@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRegisterForm } from '@/features/auth/useRegisterForm';
 import { InputField, SubmitButton } from '@/features/auth/form/formComponents';
 import { register, RegistrationError } from '@/features/auth/user-auth';
+import { translateErrorMessages, getFieldErrorMessage } from '@/features/auth/errorMessages';
 import styles from './page.module.css';
 
 export default function RegisterPage() {
@@ -20,25 +21,63 @@ export default function RegisterPage() {
     handleFieldBlur,
     handleSubmit,
     isValid,
+    setFieldErrors,
+    clearErrors,
   } = useRegisterForm({
     onSubmit: async (data) => {
       setApiError('');
+      clearErrors(); // 既存のエラーをクリア
       try {
-        await register(data);
+        const result = await register(data);
+
+        // 成功時のメッセージがあれば一瞬表示（オプション）
+        if (result.messages && result.messages.length > 0) {
+          console.log('Registration success:', result.messages[0]);
+        }
 
         // 成功時はログインページへリダイレクト
-        router.push('/register/login');
+        router.push('/profile/login');
       } catch (error) {
         if (error instanceof RegistrationError) {
-          // APIからのエラーを表示
+          // APIからのエラーを日本語に変換して表示
           if (error.errors.length > 0) {
-            setApiError(error.errors.map((e) => e.message).join(', '));
+            // エラーメッセージを日本語に変換
+            const translatedErrors = translateErrorMessages(error.errors);
+            
+            // フィールド特定のエラーをフォームエラーにマップ
+            const fieldErrors: Record<string, string> = {};
+            const generalErrors: string[] = [];
+
+            translatedErrors.forEach((e) => {
+              if (e.field && ['name1', 'name2', 'email', 'login_pwd'].includes(e.field)) {
+                // フィールド固有のエラーメッセージを取得
+                const fieldMessage = e.code 
+                  ? getFieldErrorMessage(e.field, e.code, e.message)
+                  : e.message;
+                fieldErrors[e.field] = fieldMessage;
+              } else {
+                generalErrors.push(e.message);
+              }
+            });
+
+            // フィールドエラーをフォームに設定
+            if (Object.keys(fieldErrors).length > 0) {
+              setFieldErrors(fieldErrors);
+            }
+
+            // 一般的なエラーをAPIエラーとして表示
+            if (generalErrors.length > 0) {
+              setApiError(generalErrors.join(', '));
+            } else if (Object.keys(fieldErrors).length > 0) {
+              setApiError('入力内容に問題があります。各フィールドをご確認ください。');
+            }
           } else {
             setApiError(error.message);
           }
         } else {
           setApiError('予期しないエラーが発生しました');
         }
+        console.error('Registration error:', error);
         throw error; // フックでも処理するためにre-throw
       }
     },
@@ -120,6 +159,7 @@ export default function RegisterPage() {
             isLoading={isSubmitting}
             disabled={!isValid}
             className={styles.submitButton}
+            loadingText="登録中..."
           >
             登録する
           </SubmitButton>
