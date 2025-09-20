@@ -27,7 +27,7 @@ export default function RegisterPage() {
         await register(data);
 
         // 成功時はログインページへリダイレクト
-        router.push('/register/login');
+        router.push('/profile/login');
       } catch (error) {
         if (error instanceof RegistrationError) {
           // APIからのエラーを表示
