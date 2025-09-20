@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useLoginForm } from '@/features/auth/useLoginForm';
 import { InputField, SubmitButton } from '@/features/auth/form/formComponents';
 import { login, LoginError } from '@/features/auth/user-auth';
+import { translateErrorMessages, getFieldErrorMessage } from '@/features/auth/errorMessages';
 import styles from './page.module.css';
 
 export default function LoginPage() {
@@ -38,15 +39,22 @@ export default function LoginPage() {
         router.push('/profile/todo');
       } catch (error) {
         if (error instanceof LoginError) {
-          // APIからのエラーを表示
+          // APIからのエラーを日本語に変換して表示
           if (error.errors.length > 0) {
+            // エラーメッセージを日本語に変換
+            const translatedErrors = translateErrorMessages(error.errors);
+            
             // フィールド特定のエラーをフォームエラーにマップ
             const fieldErrors: Record<string, string> = {};
             const generalErrors: string[] = [];
 
-            error.errors.forEach((e) => {
+            translatedErrors.forEach((e) => {
               if (e.field && ['email', 'password'].includes(e.field)) {
-                fieldErrors[e.field] = e.message;
+                // フィールド固有のエラーメッセージを取得
+                const fieldMessage = e.code 
+                  ? getFieldErrorMessage(e.field, e.code, e.message)
+                  : e.message;
+                fieldErrors[e.field] = fieldMessage;
               } else {
                 generalErrors.push(e.message);
               }

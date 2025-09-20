@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRegisterForm } from '@/features/auth/useRegisterForm';
 import { InputField, SubmitButton } from '@/features/auth/form/formComponents';
 import { register, RegistrationError } from '@/features/auth/user-auth';
+import { translateErrorMessages, getFieldErrorMessage } from '@/features/auth/errorMessages';
 import styles from './page.module.css';
 
 export default function RegisterPage() {
@@ -38,15 +39,22 @@ export default function RegisterPage() {
         router.push('/profile/login');
       } catch (error) {
         if (error instanceof RegistrationError) {
-          // APIからのエラーを表示
+          // APIからのエラーを日本語に変換して表示
           if (error.errors.length > 0) {
+            // エラーメッセージを日本語に変換
+            const translatedErrors = translateErrorMessages(error.errors);
+            
             // フィールド特定のエラーをフォームエラーにマップ
             const fieldErrors: Record<string, string> = {};
             const generalErrors: string[] = [];
 
-            error.errors.forEach((e) => {
+            translatedErrors.forEach((e) => {
               if (e.field && ['name1', 'name2', 'email', 'login_pwd'].includes(e.field)) {
-                fieldErrors[e.field] = e.message;
+                // フィールド固有のエラーメッセージを取得
+                const fieldMessage = e.code 
+                  ? getFieldErrorMessage(e.field, e.code, e.message)
+                  : e.message;
+                fieldErrors[e.field] = fieldMessage;
               } else {
                 generalErrors.push(e.message);
               }
