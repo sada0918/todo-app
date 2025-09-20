@@ -151,6 +151,7 @@ export default function RegisterPage() {
             isLoading={isSubmitting}
             disabled={!isValid}
             className={styles.submitButton}
+            loadingText="登録中..."
           >
             登録する
           </SubmitButton>

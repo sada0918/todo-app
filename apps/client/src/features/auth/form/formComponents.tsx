@@ -69,6 +69,7 @@ interface SubmitButtonProps {
   isLoading: boolean;
   disabled?: boolean;
   className?: string;
+  loadingText?: string;
 }
 
 /**
@@ -79,6 +80,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
   isLoading,
   disabled = false,
   className = '',
+  loadingText = '送信中...',
 }) => {
   return (
     <button
@@ -92,7 +94,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
       {isLoading ? (
         <>
           <span className={styles['loading-spinner']} aria-hidden="true" />
-          登録中...
+          {loadingText}
         </>
       ) : (
         children

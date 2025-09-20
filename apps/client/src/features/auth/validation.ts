@@ -10,6 +10,11 @@ export interface RegisterFormData {
   confirmPassword: string;
 }
 
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 export interface ValidationError {
   field: string;
   message: string;
@@ -79,6 +84,27 @@ export const validateRegisterForm = (data: RegisterFormData): ValidationError[] 
 };
 
 /**
+ * ログインフォームのバリデーション
+ */
+export const validateLoginForm = (data: LoginFormData): ValidationError[] => {
+  const errors: ValidationError[] = [];
+
+  // メールアドレスのバリデーション
+  if (!data.email.trim()) {
+    errors.push({ field: 'email', message: 'メールアドレスを入力してください' });
+  } else if (!isValidEmail(data.email)) {
+    errors.push({ field: 'email', message: '有効なメールアドレスを入力してください' });
+  }
+
+  // パスワードのバリデーション
+  if (!data.password) {
+    errors.push({ field: 'password', message: 'パスワードを入力してください' });
+  }
+
+  return errors;
+};
+
+/**
  * フィールド別のリアルタイムバリデーション
  */
 export const validateField = (field: keyof RegisterFormData, value: string, allData?: Partial<RegisterFormData>): string | null => {
@@ -106,6 +132,25 @@ export const validateField = (field: keyof RegisterFormData, value: string, allD
     case 'confirmPassword':
       if (!value) return '確認パスワードを入力してください';
       if (allData?.login_pwd && value !== allData.login_pwd) return 'パスワードが一致しません';
+      return null;
+    
+    default:
+      return null;
+  }
+};
+
+/**
+ * ログインフォーム用のフィールド別リアルタイムバリデーション
+ */
+export const validateLoginField = (field: keyof LoginFormData, value: string): string | null => {
+  switch (field) {
+    case 'email':
+      if (!value.trim()) return 'メールアドレスを入力してください';
+      if (!isValidEmail(value)) return '有効なメールアドレスを入力してください';
+      return null;
+    
+    case 'password':
+      if (!value) return 'パスワードを入力してください';
       return null;
     
     default:
