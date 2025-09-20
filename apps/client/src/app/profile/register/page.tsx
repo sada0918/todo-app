@@ -130,7 +130,7 @@ export default function RegisterPage() {
             すでにアカウントをお持ちですか？{' '}
             <button
               type="button"
-              onClick={() => router.push('/register/login')}
+              onClick={() => router.push('/profile/login')}
               className={styles.linkButton}
               disabled={isSubmitting}
             >
