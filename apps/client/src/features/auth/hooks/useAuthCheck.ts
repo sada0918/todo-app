@@ -26,33 +26,19 @@ export const useAuthCheck = () => {
         const response = await checkLoginStatus();
         console.log('✅ 認証チェック成功:', response);
 
-        // レスポンス形式を確認（直接フィールドがある場合とmemberオブジェクトがある場合）
-        let userInfo: UserInfo | null = null;
-
-        if (response.member) {
-          // member オブジェクト形式の場合
-          userInfo = {
-            name1: response.member.name1,
-            name2: response.member.name2,
-            member_id: parseInt(response.member.id),
-            isLogin: true,
-          };
-        } else if (response.name1 && response.name2 && response.member_id) {
-          // 直接フィールド形式の場合（あなたのAPIレスポンス）
-          userInfo = {
+        // レスポンスから直接フィールドを取得（フラット形式）
+        if (response.name1 && response.name2 && response.member_id) {
+          const userInfo: UserInfo = {
             name1: response.name1,
             name2: response.name2,
             member_id: response.member_id,
-            isLogin: true,
           };
-        }
 
-        if (userInfo) {
           console.log('👤 ユーザー情報を保存:', userInfo);
           setUser(userInfo);
           setAuthStatus('authenticated');
         } else {
-          // どちらの形式でもない場合は未認証
+          // 必要な情報が含まれていない場合は未認証
           console.warn('⚠️ レスポンスに必要な情報が含まれていません:', response);
           setUser(null);
           setAuthStatus('unauthenticated');

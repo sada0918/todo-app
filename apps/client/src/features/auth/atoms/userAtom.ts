@@ -7,7 +7,6 @@ export interface UserInfo {
   name1: string;
   name2: string;
   member_id: number;
-  isLogin: boolean;
 }
 
 /**
