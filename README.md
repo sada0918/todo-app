@@ -1,82 +1,153 @@
 # TodoApp
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+シンプルで使いやすいタスク管理アプリケーション
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+## 概要
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+このプロジェクトは、Nx monorepoとNext.jsを使用したTodoアプリケーションです。ユーザー認証機能を備え、安全にタスクを管理できます。
 
-## Finish your CI setup
+## 主な機能
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/qsp8fr4rtZ)
+- ✅ タスクの作成・編集・削除
+- 🔐 ユーザー認証（ログイン・新規登録）
+- 📱 レスポンシブデザイン
+- 🎨 モダンなUI/UX
 
+## 技術スタック
 
-## Run tasks
+- **フレームワーク**: Next.js 15.x
+- **状態管理**: Jotai
+- **モノレポ管理**: Nx
+- **TypeScript**: 5.8.x
+- **スタイリング**: CSS Modules
 
-To run the dev server for your app, use:
+## 開発環境のセットアップ
+
+### 必要条件
+
+- Node.js 20.x以上
+- npm または yarn
+
+### インストール
+
+```bash
+npm install
+```
+
+## タスクの実行
+
+### 開発サーバーの起動
 
 ```sh
 npx nx dev client
 ```
 
-To create a production bundle:
+ブラウザで http://localhost:4200 を開いてアプリケーションを確認できます。
+
+### プロダクションビルド
 
 ```sh
 npx nx build client
 ```
 
-To see all available targets to run for a project, run:
+### テストの実行
+
+```sh
+npx nx test client
+```
+
+### E2Eテストの実行
+
+```sh
+npx nx e2e client-e2e
+```
+
+## Vercelへのデプロイ
+
+### 前提条件
+
+1. [Vercel](https://vercel.com)アカウントを作成
+2. Vercel CLIをインストール（オプション）
+
+```bash
+npm i -g vercel
+```
+
+### デプロイ手順
+
+#### 方法1: Vercel CLI（推奨）
+
+```bash
+# プロジェクトルートで実行
+vercel
+
+# 初回は以下の質問に答える
+# - Set up and deploy "~/todo-app"? [Y/n] → Y
+# - Which scope do you want to deploy to? → 自分のアカウントを選択
+# - Link to existing project? [y/N] → N
+# - What's your project's name? → todo-app
+# - In which directory is your code located? → ./
+# - Want to modify these settings? [y/N] → N
+
+# プロダクションデプロイ
+vercel --prod
+```
+
+#### 方法2: GitHubと連携（自動デプロイ）
+
+1. GitHubにリポジトリをプッシュ
+2. [Vercel Dashboard](https://vercel.com/new)にアクセス
+3. "Import Git Repository"を選択
+4. リポジトリを選択
+5. プロジェクト設定（`vercel.json`が自動的に読み込まれます）
+6. "Deploy"をクリック
+
+### 環境変数の設定
+
+Vercel Dashboardで以下の環境変数を設定してください:
+
+- `NEXT_PUBLIC_API_URL`: APIのエンドポイントURL（デフォルト: https://todo.g.kuroco.app）
+
+## プロジェクト構成
+
+```
+todo-app/
+├── apps/
+│   ├── client/              # Next.jsアプリケーション
+│   │   ├── src/
+│   │   │   ├── app/         # App Router
+│   │   │   ├── features/    # 機能別コンポーネント
+│   │   │   └── lib/         # ユーティリティ
+│   │   └── public/          # 静的ファイル
+│   └── client-e2e/          # E2Eテスト
+├── vercel.json              # Vercel設定
+└── package.json
+```
+
+## その他のコマンド
+
+### プロジェクトの詳細を表示
 
 ```sh
 npx nx show project client
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
+### プロジェクトグラフの表示
 
 ```sh
-npx nx g @nx/next:app demo
+npx nx graph
 ```
 
-To generate a new library, use:
+### 新しいライブラリの追加
 
 ```sh
 npx nx g @nx/react:lib mylib
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+## サポート
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+問題が発生した場合は、GitHubのIssuesセクションで報告してください。
 
+## ライセンス
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+MIT
