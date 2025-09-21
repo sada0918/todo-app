@@ -22,9 +22,7 @@ export const useAuthCheck = () => {
 
       try {
         // 認証状態をチェック
-        console.log('🔍 認証チェック開始...');
         const response = await checkLoginStatus();
-        console.log('✅ 認証チェック成功:', response);
 
         // レスポンスから直接フィールドを取得（フラット形式）
         if (response.name1 && response.name2 && response.member_id) {
@@ -34,12 +32,10 @@ export const useAuthCheck = () => {
             member_id: response.member_id,
           };
 
-          console.log('👤 ユーザー情報を保存:', userInfo);
           setUser(userInfo);
           setAuthStatus('authenticated');
         } else {
           // 必要な情報が含まれていない場合は未認証
-          console.warn('⚠️ レスポンスに必要な情報が含まれていません:', response);
           setUser(null);
           setAuthStatus('unauthenticated');
           showAuthErrorToast();
@@ -47,11 +43,6 @@ export const useAuthCheck = () => {
         }
       } catch (error) {
         // エラー時は未認証として扱う
-        console.error('❌ 認証チェック失敗:', error);
-        console.error('エラー詳細:', {
-          message: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : undefined,
-        });
         setUser(null);
         setAuthStatus('unauthenticated');
         showAuthErrorToast();
