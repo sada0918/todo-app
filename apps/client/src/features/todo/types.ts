@@ -43,7 +43,18 @@ export interface TodoListResponse {
 export interface CreateTodoInput {
   subject: string;
   contents: string;
+  open_flg: number;
+  ymd: string;
   due_ymd: string;
+}
+
+/**
+ * Todo作成APIのレスポンス
+ */
+export interface CreateTodoResponse {
+  errors?: Array<{ code?: string; message?: string; field?: string }>;
+  messages?: string[];
+  id?: number;
 }
 
 /**
@@ -60,5 +71,13 @@ export interface UpdateTodoInput {
  * Todo削除時のパラメータ
  */
 export interface DeleteTodoParams {
-  topics_id: number | number[];  // 単一削除または一括削除
+  topics_id: number;
+}
+
+/**
+ * Todo削除APIのレスポンス
+ */
+export interface DeleteTodoResponse {
+  errors?: Array<{ code?: string; message?: string; field?: string }>;
+  messages?: string[];
 }

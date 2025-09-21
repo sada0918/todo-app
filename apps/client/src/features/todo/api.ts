@@ -2,8 +2,10 @@ import { environment } from '@/environments/environment';
 import type {
   TodoListResponse,
   CreateTodoInput,
+  CreateTodoResponse,
   UpdateTodoInput,
   DeleteTodoParams,
+  DeleteTodoResponse,
 } from './types';
 
 /**
@@ -92,13 +94,23 @@ export const fetchTodoList = async (
 };
 
 /**
- * Todoを作成（未実装）
+ * Todoを作成
  */
 export const createTodo = async (
   input: CreateTodoInput
-): Promise<{ topics_id: number }> => {
-  // TODO: 実装予定
-  throw new Error('Not implemented yet');
+): Promise<CreateTodoResponse> => {
+  return await todoApiRequest<CreateTodoResponse>(
+    `${environment.apiUrl}/rcms-api/3/todo`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: JSON.stringify(input),
+    }
+  );
 };
 
 /**
@@ -112,11 +124,19 @@ export const updateTodo = async (
 };
 
 /**
- * Todoを削除（単一または一括）（未実装）
+ * Todoを削除
  */
 export const deleteTodo = async (
   params: DeleteTodoParams
-): Promise<{ deleted_ids: number[] }> => {
-  // TODO: 実装予定
-  throw new Error('Not implemented yet');
+): Promise<DeleteTodoResponse> => {
+  return await todoApiRequest<DeleteTodoResponse>(
+    `${environment.apiUrl}/rcms-api/3/todo/delete/${params.topics_id}`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 };
