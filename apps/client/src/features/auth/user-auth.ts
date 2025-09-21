@@ -39,8 +39,18 @@ export interface LoginApiResponse {
 
 export interface ProfileResponse {
   errors?: ErrorResponse[];
+  // 実際のレスポンスに合わせた型定義
+  name1?: string;
+  name2?: string;
+  member_id?: number;
+  group_ids?: Record<string, string>;
+  expiresAt?: number;
+  geo_country_code?: string;
+  geo_region?: string;
+  geo_conn_speed?: string;
+  // 従来のmember形式との互換性のため
   member?: Member;
-  status: number;
+  status?: number;
 }
 
 // 汎用的なAPIエラークラス

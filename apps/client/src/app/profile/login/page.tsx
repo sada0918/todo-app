@@ -9,6 +9,7 @@ import {
   translateErrorMessages,
   getFieldErrorMessage,
 } from '@/features/auth/errorMessages';
+import { showLoginSuccessToast } from '@/lib/toast';
 import styles from './page.module.css';
 
 export default function LoginPage() {
@@ -33,9 +34,10 @@ export default function LoginPage() {
       try {
         const result = await login(data);
 
-        // ログイン成功時のメッセージがあれば表示（オプション）
+        // ログイン成功時のメッセージを表示
         if (result.member) {
           console.log('Login success for:', result.member.email);
+          showLoginSuccessToast(`${result.member.name1} ${result.member.name2}`);
         }
 
         // 成功時はTodoページへリダイレクト
