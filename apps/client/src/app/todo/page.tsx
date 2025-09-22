@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { AuthGuard } from '@/features/auth/components/AuthGuard';
-import { userAtom, userDisplayNameAtom, authStatusAtom } from '@/features/auth/atoms/userAtom';
+import {
+  userAtom,
+  userDisplayNameAtom,
+  authStatusAtom,
+} from '@/features/auth/atoms/userAtom';
 import { showSuccessToast, showErrorToast } from '@/lib/toast';
 import { useTodoList } from '@/features/todo/hooks/useTodoList';
 import { TodoList } from '@/features/todo/components/TodoList';
@@ -24,7 +28,6 @@ export default function TodoPage() {
 
 function TodoContent() {
   const router = useRouter();
-  const user = useAtomValue(userAtom);
   const displayName = useAtomValue(userDisplayNameAtom);
   const setUser = useSetAtom(userAtom);
   const setAuthStatus = useSetAtom(authStatusAtom);
@@ -41,19 +44,19 @@ function TodoContent() {
     // ユーザー情報をクリア
     setUser(null);
     setAuthStatus('unauthenticated');
-    
+
     // トースト表示
     showSuccessToast('ログアウトしました');
-    
+
     // ログインページへリダイレクト
     router.push('/profile/login');
   };
 
   // 単一のTODO選択/選択解除
   const handleSelectTodo = (id: number) => {
-    setSelectedIds(prev =>
+    setSelectedIds((prev) =>
       prev.includes(id)
-        ? prev.filter(selectedId => selectedId !== id)
+        ? prev.filter((selectedId) => selectedId !== id)
         : [...prev, id]
     );
   };
@@ -61,7 +64,7 @@ function TodoContent() {
   // 全選択/全選択解除
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(todos.map(todo => todo.topics_id));
+      setSelectedIds(todos.map((todo) => todo.topics_id));
     } else {
       setSelectedIds([]);
     }
@@ -87,7 +90,7 @@ function TodoContent() {
       // 一括削除の場合
       if (selectedIds.length > 0 && !todoToDelete) {
         const errors: string[] = [];
-        
+
         for (const id of selectedIds) {
           try {
             await deleteTodo({ topics_id: id });
@@ -107,7 +110,7 @@ function TodoContent() {
         }
 
         setSelectedIds([]);
-      } 
+      }
       // 単一削除の場合
       else if (todoToDelete) {
         await deleteTodo({ topics_id: todoToDelete.topics_id });
@@ -116,7 +119,7 @@ function TodoContent() {
 
       // リスト再取得
       refetch();
-      
+
       // モーダルを閉じる
       setIsDeleteModalOpen(false);
       setTodoToDelete(null);
@@ -141,17 +144,21 @@ function TodoContent() {
 
   return (
     <div className={styles['container']}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '2rem',
-        maxWidth: '525px',
-        margin: '0 auto 2rem auto',
-        gap: '0.5rem',
-        flexWrap: 'wrap'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', minWidth: 'fit-content' }}>{displayName}のTodoリスト</h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '2rem',
+          maxWidth: '525px',
+          margin: '0 auto 2rem auto',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', minWidth: 'fit-content' }}>
+          {displayName}のTodoリスト
+        </h1>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           {selectedIds.length > 0 && (
             <button
@@ -165,7 +172,7 @@ function TodoContent() {
                 cursor: 'pointer',
                 fontSize: '0.875rem',
                 fontWeight: '500',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = '#b91c1c';
@@ -188,7 +195,7 @@ function TodoContent() {
               cursor: 'pointer',
               fontSize: '0.875rem',
               fontWeight: '500',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = '#2563eb';
@@ -209,7 +216,7 @@ function TodoContent() {
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '0.875rem',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = '#f9fafb';
@@ -229,18 +236,26 @@ function TodoContent() {
 
       {/* Todoリスト表示 */}
       <div style={{ marginTop: '2rem' }}>
-        <TodoList 
-          todos={todos} 
+        <TodoList
+          todos={todos}
           isLoading={isLoading}
           selectedIds={selectedIds}
           onSelectTodo={handleSelectTodo}
           onSelectAll={handleSelectAll}
           onDeleteTodo={handleDeleteClick}
         />
-        
+
         {pageInfo && pageInfo.totalCnt > 0 && (
-          <div style={{ marginTop: '1.5rem', textAlign: 'center', color: '#6b7280', fontSize: '0.875rem' }}>
-            {pageInfo.totalCnt}件中 {pageInfo.firstIndex}〜{pageInfo.lastIndex}件を表示
+          <div
+            style={{
+              marginTop: '1.5rem',
+              textAlign: 'center',
+              color: '#6b7280',
+              fontSize: '0.875rem',
+            }}
+          >
+            {pageInfo.totalCnt}件中 {pageInfo.firstIndex}〜{pageInfo.lastIndex}
+            件を表示
           </div>
         )}
       </div>
@@ -258,7 +273,11 @@ function TodoContent() {
         onClose={handleDeleteModalClose}
         onConfirm={handleDeleteConfirm}
         todo={todoToDelete}
-        todos={selectedIds.length > 0 && !todoToDelete ? todos.filter(t => selectedIds.includes(t.topics_id)) : undefined}
+        todos={
+          selectedIds.length > 0 && !todoToDelete
+            ? todos.filter((t) => selectedIds.includes(t.topics_id))
+            : undefined
+        }
         isDeleting={isDeleting}
       />
     </div>
