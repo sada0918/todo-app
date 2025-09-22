@@ -1,6 +1,6 @@
 // Production environment
 export const environment = {
   production: true,
-  apiUrl: 'https://todo.g.kuroco.app',
+  apiUrl: '/api/proxy', // プロキシ経由でアクセス（スマホ対応）
   appName: 'Todo App',
 };

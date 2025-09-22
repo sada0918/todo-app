@@ -1,6 +1,6 @@
 // Default environment (development)
 export const environment = {
   production: false,
-  apiUrl: 'https://todo.g.kuroco.app',
+  apiUrl: '/api/proxy', // プロキシ経由でアクセス（スマホ対応）
   appName: 'Todo App (Development)',
 };
