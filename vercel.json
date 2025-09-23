@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd apps/client && npx nx build client --configuration=production",
+  "outputDirectory": "apps/client/.next",
+  "devCommand": "npx nx dev client",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["hnd1"]
+}
