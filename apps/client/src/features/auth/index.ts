@@ -14,9 +14,20 @@ export {
   authStatusAtom,
   isAuthenticatedAtom,
   userDisplayNameAtom,
-  type UserInfo,
-  type AuthStatus,
 } from './atoms/userAtom';
+
+// Types
+export type {
+  UserInfo,
+  AuthStatus,
+  UserBase,
+  UserForRegister,
+  UserForLogin,
+  ApiError,
+  RegisterResponse,
+  LoginResponse,
+  ProfileResponse,
+} from './types';
 
 // Utils
 export {
@@ -32,7 +43,5 @@ export {
   checkLoginStatus,
   LoginError,
   RegistrationError,
-  type ApiLoginData,
-  type ApiRegisterData,
-  type Member,
+  AuthApiError,
 } from './user-auth';

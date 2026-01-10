@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSetAtom } from 'jotai';
-import { userAtom, authStatusAtom, UserInfo } from '../atoms/userAtom';
+import { userAtom, authStatusAtom } from '../atoms/userAtom';
+import type { UserInfo } from '../types';
 import { checkLoginStatus } from '../user-auth';
 import { showAuthErrorToast } from '@/lib/toast';
 

@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import type { TodoItem } from '../types';
+import type { TodoListItem } from '../types';
 import styles from './TodoList.module.css';
 
 interface TodoListProps {
-  todos: TodoItem[];
+  todos: TodoListItem[];
   isLoading: boolean;
   selectedIds: number[];
   onSelectTodo: (id: number) => void;
   onSelectAll: (checked: boolean) => void;
-  onDeleteTodo: (todo: TodoItem) => void;
+  onDeleteTodo: (todo: TodoListItem) => void;
 }
 
 export const TodoList: React.FC<TodoListProps> = ({
@@ -69,7 +69,7 @@ export const TodoList: React.FC<TodoListProps> = ({
       {/* Todoリスト */}
       <div className={styles.list}>
         {todos.map((todo) => (
-          <TodoItemCard
+          <TodoListItemCard
             key={todo.topics_id}
             todo={todo}
             isSelected={selectedIds?.includes(todo.topics_id) ?? false}
@@ -82,14 +82,14 @@ export const TodoList: React.FC<TodoListProps> = ({
   );
 };
 
-interface TodoItemCardProps {
-  todo: TodoItem;
+interface TodoListItemCardProps {
+  todo: TodoListItem;
   isSelected: boolean;
   onSelect: (id: number) => void;
-  onDelete: (todo: TodoItem) => void;
+  onDelete: (todo: TodoListItem) => void;
 }
 
-const TodoItemCard: React.FC<TodoItemCardProps> = ({
+const TodoListItemCard: React.FC<TodoListItemCardProps> = ({
   todo,
   isSelected,
   onSelect,

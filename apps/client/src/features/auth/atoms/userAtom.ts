@@ -1,18 +1,5 @@
 import { atom } from 'jotai';
-
-/**
- * ユーザー情報の型定義
- */
-export interface UserInfo {
-  name1: string;
-  name2: string;
-  member_id: number;
-}
-
-/**
- * 認証状態の型定義
- */
-export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated';
+import type { UserInfo, AuthStatus } from '../types';
 
 /**
  * ユーザー情報のAtom

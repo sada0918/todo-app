@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchTodoList, TodoApiError } from '../api';
-import type { TodoItem, PageInfo } from '../types';
+import type { TodoListItem, PageInfo } from '../types';
 import { showErrorToast } from '@/lib/toast';
 
 interface UseTodoListReturn {
-  todos: TodoItem[];
+  todos: TodoListItem[];
   pageInfo: PageInfo | null;
   isLoading: boolean;
   error: string | null;
@@ -16,7 +16,7 @@ interface UseTodoListReturn {
  * Todoリスト取得用カスタムフック
  */
 export const useTodoList = (): UseTodoListReturn => {
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [todos, setTodos] = useState<TodoListItem[]>([]);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

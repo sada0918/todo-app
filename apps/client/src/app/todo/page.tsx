@@ -15,7 +15,7 @@ import { TodoList } from '@/features/todo/components/TodoList';
 import { CreateTodoModal } from '@/features/todo/components/CreateTodoModal';
 import { DeleteConfirmModal } from '@/features/todo/components/DeleteConfirmModal';
 import { deleteTodo, TodoApiError } from '@/features/todo/api';
-import type { TodoItem } from '@/features/todo/types';
+import type { TodoListItem } from '@/features/todo/types';
 import styles from './page.module.css';
 
 export default function TodoPage() {
@@ -33,7 +33,7 @@ function TodoContent() {
   const setAuthStatus = useSetAtom(authStatusAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [todoToDelete, setTodoToDelete] = useState<TodoItem | null>(null);
+  const [todoToDelete, setTodoToDelete] = useState<TodoListItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -71,7 +71,7 @@ function TodoContent() {
   };
 
   // 削除ボタンクリック
-  const handleDeleteClick = (todo: TodoItem) => {
+  const handleDeleteClick = (todo: TodoListItem) => {
     setTodoToDelete(todo);
     setIsDeleteModalOpen(true);
   };

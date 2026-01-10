@@ -1,74 +1,29 @@
 import { environment } from '@/environments/environment';
-import { ErrorResponse } from './interface';
-
-// 共通の型定義
-export interface Member {
-  id: string;
-  name1: string;
-  name2: string;
-  email: string;
-}
-
-// 登録用の型定義
-export interface ApiRegisterData {
-  name1: string;
-  name2: string;
-  email: string;
-  login_pwd: string;
-}
-
-export interface RegisterApiResponse {
-  errors?: ErrorResponse[];
-  member?: Member;
-  messages?: string[];
-  id?: number;
-}
-
-// ログイン用の型定義
-export interface ApiLoginData {
-  email: string;
-  password: string;
-}
-
-export interface LoginApiResponse {
-  errors?: ErrorResponse[];
-  member?: Member;
-  token?: string;
-  expires_at?: string;
-}
-
-export interface ProfileResponse {
-  errors?: ErrorResponse[];
-  // 実際のレスポンスに合わせた型定義
-  name1?: string;
-  name2?: string;
-  member_id?: number;
-  group_ids?: Record<string, string>;
-  expiresAt?: number;
-  geo_country_code?: string;
-  geo_region?: string;
-  geo_conn_speed?: string;
-  // 従来のmember形式との互換性のため
-  member?: Member;
-  status?: number;
-}
+import type {
+  ApiError as ApiErrorType,
+  UserForRegister,
+  UserForLogin,
+  RegisterResponse,
+  LoginResponse,
+  ProfileResponse,
+} from './types';
 
 // 汎用的なAPIエラークラス
-export class ApiError extends Error {
+export class AuthApiError extends Error {
   constructor(
     message: string,
-    public errors: ErrorResponse[] = [],
+    public errors: ApiErrorType[] = [],
     public statusCode?: number
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = 'AuthApiError';
   }
 }
 
-export class RegistrationError extends ApiError {
+export class RegistrationError extends AuthApiError {
   constructor(
     message: string,
-    errors: ErrorResponse[] = [],
+    errors: ApiErrorType[] = [],
     statusCode?: number
   ) {
     super(message, errors, statusCode);
@@ -76,10 +31,10 @@ export class RegistrationError extends ApiError {
   }
 }
 
-export class LoginError extends ApiError {
+export class LoginError extends AuthApiError {
   constructor(
     message: string,
-    errors: ErrorResponse[] = [],
+    errors: ApiErrorType[] = [],
     statusCode?: number
   ) {
     super(message, errors, statusCode);
@@ -90,11 +45,11 @@ export class LoginError extends ApiError {
 /**
  * 統合されたAPIリクエスト処理
  */
-async function apiRequest<T extends { errors?: ErrorResponse[] }>(
+async function apiRequest<T extends { errors?: ApiErrorType[] }>(
   url: string,
   options: RequestInit,
   apiErrorMessage: string,
-  ErrorClass: typeof ApiError = ApiError
+  ErrorClass: typeof AuthApiError = AuthApiError
 ): Promise<T> {
   try {
     const response = await fetch(url, options);
@@ -137,7 +92,7 @@ async function apiRequest<T extends { errors?: ErrorResponse[] }>(
 
     return data;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof AuthApiError) {
       throw error;
     }
 
@@ -151,8 +106,8 @@ async function apiRequest<T extends { errors?: ErrorResponse[] }>(
 /**
  * 会員登録API呼び出し
  */
-export const register = async (postData: ApiRegisterData): Promise<RegisterApiResponse> => {
-  return await apiRequest<RegisterApiResponse>(
+export const register = async (postData: UserForRegister): Promise<RegisterResponse> => {
+  return await apiRequest<RegisterResponse>(
     `${environment.apiUrl}/rcms-api/1/member/register`,
     {
       method: 'POST',
@@ -170,9 +125,9 @@ export const register = async (postData: ApiRegisterData): Promise<RegisterApiRe
  * ログインAPI呼び出し
  */
 export const login = async (
-  loginData: ApiLoginData
-): Promise<LoginApiResponse> => {
-  return await apiRequest<LoginApiResponse>(
+  loginData: UserForLogin
+): Promise<LoginResponse> => {
+  return await apiRequest<LoginResponse>(
     `${environment.apiUrl}/rcms-api/1/login`,
     {
       method: 'POST',
