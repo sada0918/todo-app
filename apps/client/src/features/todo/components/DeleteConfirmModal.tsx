@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import type { TodoItem } from '../types';
+import type { TodoListItem } from '../types';
 import styles from './DeleteConfirmModal.module.css';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  todo: TodoItem | null;
-  todos?: TodoItem[];
+  todo: TodoListItem | null;
+  todos?: TodoListItem[];
   isDeleting: boolean;
 }
 

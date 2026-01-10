@@ -1,11 +1,11 @@
 import { environment } from '@/environments/environment';
 import type {
   TodoListResponse,
-  CreateTodoInput,
+  TodoForCreate,
   CreateTodoResponse,
-  UpdateTodoInput,
-  DeleteTodoParams,
-  DeleteTodoResponse,
+  TodoForUpdate,
+  TodoIdentifier,
+  BaseApiResponse,
 } from './types';
 
 /**
@@ -97,7 +97,7 @@ export const fetchTodoList = async (
  * Todoを作成
  */
 export const createTodo = async (
-  input: CreateTodoInput
+  input: TodoForCreate
 ): Promise<CreateTodoResponse> => {
   return await todoApiRequest<CreateTodoResponse>(
     `${environment.apiUrl}/rcms-api/3/todo`,
@@ -117,7 +117,7 @@ export const createTodo = async (
  * Todoを更新（未実装）
  */
 export const updateTodo = async (
-  input: UpdateTodoInput
+  input: TodoForUpdate
 ): Promise<{ topics_id: number }> => {
   // TODO: 実装予定
   throw new Error('Not implemented yet');
@@ -127,9 +127,9 @@ export const updateTodo = async (
  * Todoを削除
  */
 export const deleteTodo = async (
-  params: DeleteTodoParams
-): Promise<DeleteTodoResponse> => {
-  return await todoApiRequest<DeleteTodoResponse>(
+  params: TodoIdentifier
+): Promise<BaseApiResponse> => {
+  return await todoApiRequest<BaseApiResponse>(
     `${environment.apiUrl}/rcms-api/3/todo/delete/${params.topics_id}`,
     {
       method: 'POST',
