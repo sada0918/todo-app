@@ -193,4 +193,3 @@ export interface PageInfo {
   firstIndex: number;     // 最初のインデックス
   lastIndex: number;      // 最後のインデックス
 }
-
